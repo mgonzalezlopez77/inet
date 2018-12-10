@@ -57,7 +57,7 @@ if [ "$SPLIT_INDEX" = "0" ]; then
 
   # test with all features disabled
   if [ "$testindex" -lt "$SKIP_TESTS" ] ; then
-    echo "*** all_disabled: SKIPPED"
+    echo "*** $testindex. all_disabled: SKIPPED"
   else
     ./bin/inet_featuretool -q disable -f all
     runtest all_disabled
@@ -67,7 +67,7 @@ if [ "$SPLIT_INDEX" = "0" ]; then
 
   # test with default features enabled (except skipped ones)
   if [ "$testindex" -lt "$SKIP_TESTS" ] ; then
-    echo "*** default: SKIPPED"
+    echo "*** $testindex. default: SKIPPED"
   else
     ./bin/inet_featuretool -q reset
     if [ -n "$skipped_features" ]; then
@@ -80,7 +80,7 @@ if [ "$SPLIT_INDEX" = "0" ]; then
 
   # test with all features enabled (except skipped ones)
   if [ "$testindex" -lt "$SKIP_TESTS" ] ; then
-    echo "*** all_enabled: SKIPPED"
+    echo "*** $testindex. all_enabled: SKIPPED"
   else
     ./bin/inet_featuretool -q enable -f all
     if [ -n "$skipped_features" ]; then
@@ -95,7 +95,7 @@ fi
 # test with each feature enabled - one by one
 for feature in $base_features; do
   if echo $skipped_features | grep -q $feature || [ "$testindex" -lt "$SKIP_TESTS" ] ; then
-    echo "*** ${feature}_enabled: SKIPPED"
+    echo "*** $testindex. ${feature}_enabled: SKIPPED"
   else
     ./bin/inet_featuretool -q disable -f all
     ./bin/inet_featuretool -q enable -f $feature
@@ -108,10 +108,10 @@ done
 # test with each feature disabled - one by one
 for feature in $base_features; do
   ./bin/inet_featuretool -q enable -f all
-  if [ -n "$skipped_features" || [ "$testindex" -lt "$SKIP_TESTS" ] ; then
+  if [ -n "$skipped_features" ]; then
     ./bin/inet_featuretool -q disable -f $skipped_features
   fi
-  if echo $skipped_features | grep -q $feature; then
+  if echo $skipped_features | grep -q $feature  || [ "$testindex" -lt "$SKIP_TESTS" ] ; then
     echo "*** ${feature}_disabled: SKIPPED"
   else
     ./bin/inet_featuretool -q disable -f $feature
